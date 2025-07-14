@@ -3,6 +3,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import { config as envConfig } from "@chainlink/env-enc";
 envConfig();
 import "@nomicfoundation/hardhat-verify";
+import "./tasks";
 import { ProxyAgent, setGlobalDispatcher } from "undici";
 
 const proxyAgent = new ProxyAgent("http://127.0.0.1:7890");
@@ -30,7 +31,7 @@ const config: HardhatUserConfig = {
   // 如果你使用的是其他区块链浏览器，请根据其文档进行配置
   etherscan: {
     apiKey: ETHERSCAN_API_KEY // Sepolia 的 Etherscan API Key,
-  }
+  },
 };
 
 export default config;

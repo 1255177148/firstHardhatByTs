@@ -1,0 +1,46 @@
+import { task } from "hardhat/config";
+import { HardhatRuntimeEnvironment,TaskArguments  } from "hardhat/types";
+
+task("deploy-fundme", "部署FundMe合约", async (args: TaskArguments, hre) => {
+    // 创建一个合约工厂
+    const fundMe = await hre.ethers.getContractFactory("FundMe");
+    console.log("开始部署FundMe合约...");
+    // 部署合约
+    const lockTime = 1200; // 设置锁定时间为1200秒
+    const fundMeContract = await fundMe.deploy(lockTime);
+    // 等待合约部署完成
+    // 下面是两种方式来等待合约部署完成
+    // await fundMeContract.deployed();
+    // 或者
+    // await fundMeContract.waitForDeployment();
+    // await fundMeContract.deployed();
+    await fundMeContract.waitForDeployment();
+    console.log("FundMe合约已部署到:", fundMeContract.target);
+    // 如果当前网络是 Sepolia并且有 Etherscan API Key，等待5个区块确认后进行合约验证
+    if (hre.network.config.chainId == 11155111 && process.env.ETHERSCAN_API_KEY) {
+        // 等待5个区块确认，确保 Etherscan 可读取字节码
+        console.log("等待区块确认...");
+        const deploymentTx = fundMeContract.deploymentTransaction();
+        if (deploymentTx) {
+            await deploymentTx.wait(5);
+        } else {
+            throw new Error("无法获取部署交易对象，无法等待确认");
+        }
+        console.log("区块确认完成，开始验证合约...");
+        // 验证合约
+        await verifyFundMe(fundMeContract.target, [
+            lockTime // 这是构造函数的参数
+        ],
+            hre);
+    }
+})
+
+async function verifyFundMe(address: any, constructorArguments: any, hardhat: HardhatRuntimeEnvironment) {
+    console.log("验证合约中...");
+    await hardhat.run("verify:verify", {
+        address: address,
+        constructorArguments: constructorArguments,
+    });
+    console.log("合约验证完成");
+
+}

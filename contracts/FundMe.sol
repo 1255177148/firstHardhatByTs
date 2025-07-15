@@ -132,6 +132,10 @@ contract FundMe {
         owner = newOwner;
     }
 
+    function getOwner() public view returns (address) {
+        return owner;
+    }
+
     /*
      * 修改器，类似于切面
      */

@@ -4,6 +4,7 @@ import { config as envConfig } from "@chainlink/env-enc";
 envConfig();
 import "@nomicfoundation/hardhat-verify";
 import "./tasks";
+import "@typechain/hardhat";// 引入 TypeChain 支持,可以生成合约的 TypeScript 类型定义,在使用编译合约命令后会自动生成对应的合约typechain类型定义文件
 import { ProxyAgent, setGlobalDispatcher } from "undici";
 
 const proxyAgent = new ProxyAgent("http://127.0.0.1:7890");
@@ -15,7 +16,7 @@ const ETHERSCAN_API_KEY: any = process.env.ETHERSCAN_API_KEY;
 const config: HardhatUserConfig = {
   solidity: "0.8.28",
   // 配置网络
-  defaultNetwork: "sepolia",// 设置默认网络为 Sepolia
+  // defaultNetwork: "sepolia",// 设置默认网络为 Sepolia
   // 这里可以配置多个网络
   networks: {
     sepolia: {

@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "deploy:sepolia": "cross-env HARDHAT_NETWORK=sepolia hardhat deploy",
+    "deploy:hardhat": "cross-env HARDHAT_NETWORK=hardhat hardhat deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -16,8 +18,13 @@
     "@nomicfoundation/hardhat-verify": "^2.0.14",
     "@typechain/hardhat": "^9.1.0",
     "dotenv": "^17.2.0",
+    "dotenv-flow": "^4.1.0",
     "hardhat": "^2.25.0",
+    "hardhat-deploy": "^1.0.4",
     "typechain": "^8.3.2",
     "undici": "^7.11.0"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3"
   }
 }

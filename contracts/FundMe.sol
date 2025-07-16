@@ -15,19 +15,17 @@ contract FundMe {
     mapping(address => uint256) public addressToAmountFunded;
     address[] keys; // 存储addressToAmountFunded的key
     bool public fundMeCompleted = false; //是否提款成功
-    uint256 constant MINNUM_VALUE = 100 * 10**18; //每笔最低限制100美元
-    uint256 constant TARGET_VALUE = 300 * 10**18; // 众筹的目标值
+    uint256 constant MINNUM_VALUE = 100 * 10 ** 18; //每笔最低限制100美元
+    uint256 constant TARGET_VALUE = 300 * 10 ** 18; // 众筹的目标值
     AggregatorV3Interface internal dataFeed;
     address owner; //合约的拥有者，也就是可以提款的人
     uint256 deploymentTimestamp; // 合约部署时的时间戳
     uint256 lockTime; // 锁定众筹的时间,单位为秒
     address erc20Addr;
 
-    constructor(uint256 _lockTime) {
+    constructor(uint256 _lockTime, address _dataFeedAddress) {
         owner = msg.sender; //获取部署合约的地址
-        dataFeed = AggregatorV3Interface(
-            0x694AA1769357215DE4FAC081bf1f309aDC325306
-        );
+        dataFeed = AggregatorV3Interface(_dataFeedAddress);
         deploymentTimestamp = block.timestamp;
         lockTime = _lockTime;
     }
@@ -78,13 +76,11 @@ contract FundMe {
     /*
      * 将eth转为usd
      */
-    function convertEthToUsd(uint256 ethAmount)
-        internal
-        view
-        returns (uint256)
-    {
+    function convertEthToUsd(
+        uint256 ethAmount
+    ) internal view returns (uint256) {
         uint256 ethPrice = uint256(getChainlinkDataFeedLatestAnswer());
-        uint256 conversionRate = 10**8; //美元每eth，精确度是10的8次方
+        uint256 conversionRate = 10 ** 8; //美元每eth，精确度是10的8次方
         uint256 dolarAmount = (ethPrice / conversionRate) * ethAmount;
         return dolarAmount;
     }
@@ -92,7 +88,7 @@ contract FundMe {
     /*
      * 提取众筹金额
      */
-    function getFund() external windowOpen onlyOwner{
+    function getFund() external windowOpen onlyOwner {
         require(
             convertEthToUsd(address(this).balance) >= TARGET_VALUE,
             unicode"没有达到目标额度，不能提取"

@@ -7,7 +7,7 @@ import {FundMe} from "./FundMe.sol";
 
 contract FundMeTokenERC20 is ERC20 {
     FundMe fundMe;
-    mapping (address => bool) mintFlags;
+    mapping(address => bool) mintFlags;
 
     constructor(
         string memory tokenName,

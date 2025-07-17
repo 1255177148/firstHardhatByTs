@@ -20,7 +20,10 @@ const deployFundMe = async (hre: HardhatRuntimeEnvironment) => {
     dataFeedAddress = await deployments.get("MockV3Aggregator").then(d => d.address);
     console.log(`Using MockV3Aggregator address: ${dataFeedAddress}`);
   }
-  const args = [1200, dataFeedAddress]; // 构造函数参数,设置锁定时间为1200秒
+  const timelocked = process.env.timelocked
+    ? parseInt(process.env.timelocked, 10)
+    : 120;
+  const args = [timelocked, dataFeedAddress]; // 构造函数参数,设置锁定时间为120秒
   const fundMe = await deploy("FundMe", {
     from: deployer,
     args: args, // 构造函数参数

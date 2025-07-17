@@ -1,13 +1,13 @@
-import { ethers, deployments, getNamedAccounts } from "hardhat";
+import { ethers, deployments, getNamedAccounts, network } from "hardhat";
 import { assert, expect } from "chai";
-import { FundMe } from "../typechain-types/contracts";
-import { ContractTransactionReceipt } from "ethers";
+import { FundMe } from "../../typechain-types/contracts";
 import dotenvFlow from "dotenv-flow";
 import { time, mine } from "@nomicfoundation/hardhat-network-helpers";
 
 dotenvFlow.config({ node_env: process.env.HARDHAT_NETWORK });
-
-describe("FundMe", function () {
+const isLiveNetwork =
+  network.name !== "hardhat" && network.name !== "localhost";
+isLiveNetwork ? describe.skip : describe("FundMe", function () {
   let fundme: FundMe;
   let fundmeSecond: FundMe;
   let firstAccount: string;

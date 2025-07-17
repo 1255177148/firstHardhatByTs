@@ -33,6 +33,9 @@ const config: HardhatUserConfig = {
       chainId: 11155111, // Sepolia 的链 ID,在chainlist.org上可以找到
     },
   },
+  mocha: {
+    timeout: 400000, // 设置测试超时时间为400秒
+  },
   // 配置 Etherscan 验证
   // 注意：如果你没有 Etherscan API Key，可以在 Etherscan 上注册
   // 并在 https://sepolia.etherscan.io/apis 上获取 API Key

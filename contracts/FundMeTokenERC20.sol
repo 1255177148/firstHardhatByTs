@@ -15,6 +15,7 @@ contract FundMeTokenERC20 is ERC20 {
         address fundMeAddr
     ) ERC20(tokenName, tokenSymbol) {
         fundMe = FundMe(fundMeAddr); // 类型转换，把fundMeAddr合约地址转换为FundMe合约类型的地址
+        fundMe.setErc20Addr(address(this)); // 设置FundMe合约的ERC20地址为当前合约地址
     }
 
     // mint函数，铸造通证

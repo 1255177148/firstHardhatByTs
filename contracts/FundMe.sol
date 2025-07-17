@@ -22,6 +22,7 @@ contract FundMe {
     uint256 deploymentTimestamp; // 合约部署时的时间戳
     uint256 lockTime; // 锁定众筹的时间,单位为秒
     address erc20Addr;
+    event RefundByFunder(address, uint256);// 退款事件
 
     constructor(uint256 _lockTime, address _dataFeedAddress) {
         owner = msg.sender; //获取部署合约的地址
@@ -49,11 +50,22 @@ contract FundMe {
         return addressToAmountFunded[addr];
     }
 
+    /**
+     * 铸造通证后更改众筹金额
+     * @notice 这个函数只能由FundMeTokenERC20合约调用
+     * @param addr 要更改众筹金额的地址
+     * @param amount 要更改的众筹金额
+     */
     function setFunderToAmount(address addr, uint256 amount) public {
         require(erc20Addr == msg.sender, unicode"无权调用此函数");
         addressToAmountFunded[addr] = amount;
     }
 
+    /**
+     * 设置FundMe合约的ERC20地址
+     * @param addr 要设置的ERC20地址
+     * @notice 这个函数只能由合约拥有者调用
+     */
     function setErc20Addr(address addr) public onlyOwner {
         erc20Addr = addr;
     }
@@ -110,7 +122,7 @@ contract FundMe {
     /*
     退款操作
     */
-    function refund() external {
+    function refund() external windowOpen {
         require(!fundMeCompleted, unicode"生产商已提款，不能退款");
         uint256 amountToRefund = addressToAmountFunded[msg.sender];
         require(amountToRefund > 0, unicode"没有众筹过");
@@ -122,6 +134,7 @@ contract FundMe {
         (successFlag, ) = payable(msg.sender).call{value: amountToRefund}("");
         require(successFlag, unicode"交易失败");
         addressToAmountFunded[msg.sender] = 0; //清空众筹金额
+        emit RefundByFunder(msg.sender, amountToRefund); // 触发退款事件
     }
 
     function transferOwnerShip(address newOwner) public onlyOwner {

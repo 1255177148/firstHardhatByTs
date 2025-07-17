@@ -1,13 +1,30 @@
 import { task } from "hardhat/config";
 import { HardhatRuntimeEnvironment,TaskArguments  } from "hardhat/types";
+import dotenvFlow from "dotenv-flow";
 
 task("deploy-fundme", "部署FundMe合约", async (args: TaskArguments, hre) => {
+    // 加载与当前网络对应的 .env 文件
+    // 这里的 node_env 是当前网络的名称,例如 sepolia,hardhat 等
+    // 这样可以确保在不同的网络上使用不同的环境变量
+    dotenvFlow.config({ node_env: process.env.HARDHAT_NETWORK });
+    const isLiveNetwork =
+        hre.network.name !== "hardhat" && hre.network.name !== "localhost";
+
+    // 部署 FundMe 合约
+    let dataFeedAddress = process.env.dataFeedAddress;
+    if (!dataFeedAddress) {
+        dataFeedAddress = await hre.deployments.get("MockV3Aggregator").then(d => d.address);
+        console.log(`Using MockV3Aggregator address: ${dataFeedAddress}`);
+    }
+    if (!dataFeedAddress) {
+        throw new Error("dataFeedAddress is undefined. Please check your environment variables or deployment scripts.");
+    }
     // 创建一个合约工厂
     const fundMe = await hre.ethers.getContractFactory("FundMe");
     console.log("开始部署FundMe合约...");
     // 部署合约
     const lockTime = 1200; // 设置锁定时间为1200秒
-    const fundMeContract = await fundMe.deploy(lockTime);
+    const fundMeContract = await fundMe.deploy(lockTime, dataFeedAddress);
     // 等待合约部署完成
     // 下面是两种方式来等待合约部署完成
     // await fundMeContract.deployed();

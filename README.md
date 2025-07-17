@@ -11,6 +11,20 @@ REPORT_GAS=true npx hardhat test
 npx hardhat node
 npx hardhat ignition deploy ./ignition/modules/Lock.ts
 ```
+## 创建项目
+先初始化一个node.js项目
+```shell
+npm init -y
+```
+然后安装hardhat
+```shell
+npm intall hardhat -D
+```
+然后初始化hardhat项目
+```shell
+npx hardhat init
+```
+
 ## 配置文件加密
 可以使用 
 ```shell
